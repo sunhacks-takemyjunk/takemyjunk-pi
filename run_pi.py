@@ -30,7 +30,7 @@ client.tls_set(ca_certs="root-CA.crt",
 client.connect("at6fo26c2tah4-ats.iot.us-east-1.amazonaws.com", port=8883)
 
 # Subscribe to the IoT topic
-client.subscribe("your/iot/topic")
+client.subscribe("pi_tasks")
 
 # Start the MQTT client
 client.loop_forever()
