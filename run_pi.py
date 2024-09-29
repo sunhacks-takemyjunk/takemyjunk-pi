@@ -17,3 +17,6 @@ def sns():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+    
+# SUBSCRIBE TO SNS CMD
+# aws sns subscribe --topic-arn arn:aws:sns:us-east-1:123456789012:YourSNSTopic --protocol http --notification-endpoint http://<RaspberryPi_IP>:5000/sns
