@@ -1,22 +1,36 @@
-from flask import Flask, request
+import paho.mqtt.client as mqtt
+import ssl
 import json
 
-app = Flask(__name__)
+# Define the MQTT client
+client = mqtt.Client()
 
-@app.route('/sns', methods=['POST'])
-def sns():
-    message = json.loads(request.data)
-    action = message.get('action')
+# Define the callback for when a message is received
+def on_message(client, userdata, message):
+    payload = json.loads(message.payload)
+    action = payload.get('action')
     if action == "open_door":
         # Perform the hardware action here
         print("Opening the door")
-    if action == "close_door":
+    elif action == "close_door":
         # Perform the hardware action here
         print("Closing the door")
-    return '', 200
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-    
-# SUBSCRIBE TO SNS CMD
-# aws sns subscribe --topic-arn arn:aws:sns:us-east-1:123456789012:YourSNSTopic --protocol http --notification-endpoint http://<RaspberryPi_IP>:5000/sns
+# Set the callback
+client.on_message = on_message
+
+# Configure the client with the AWS IoT Core endpoint and certificates
+client.tls_set(ca_certs="root-CA.crt",
+               certfile="certificate.pem.crt",
+               keyfile="private.pem.key",
+               tls_version=ssl.PROTOCOL_TLSv1_2,
+               ciphers=None)
+
+# Connect to the AWS IoT Core endpoint
+client.connect("your-iot-endpoint.amazonaws.com", port=8883)
+
+# Subscribe to the IoT topic
+client.subscribe("your/iot/topic")
+
+# Start the MQTT client
+client.loop_forever()
