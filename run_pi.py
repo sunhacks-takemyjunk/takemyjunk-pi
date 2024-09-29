@@ -21,13 +21,13 @@ client.on_message = on_message
 
 # Configure the client with the AWS IoT Core endpoint and certificates
 client.tls_set(ca_certs="root-CA.crt",
-               certfile="certificate.pem.crt",
-               keyfile="private.pem.key",
+               certfile="takemyjunk_thing.cert.pem",
+               keyfile="takemyjunk_thing.private.key",
                tls_version=ssl.PROTOCOL_TLSv1_2,
                ciphers=None)
 
 # Connect to the AWS IoT Core endpoint
-client.connect("your-iot-endpoint.amazonaws.com", port=8883)
+client.connect("at6fo26c2tah4-ats.iot.us-east-1.amazonaws.com", port=8883)
 
 # Subscribe to the IoT topic
 client.subscribe("your/iot/topic")
