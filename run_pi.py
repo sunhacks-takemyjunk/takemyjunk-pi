@@ -1,6 +1,10 @@
 import paho.mqtt.client as mqtt
 import ssl
 import json
+import logging
+
+# Enable logging
+logging.basicConfig(level=logging.DEBUG)
 
 # Define the MQTT client
 client = mqtt.Client()
@@ -16,8 +20,19 @@ def on_message(client, userdata, message):
         # Perform the hardware action here
         print("Closing the door")
 
-# Set the callback
+# Set the callback for message reception
 client.on_message = on_message
+
+# Define the callback for connection
+def on_connect(client, userdata, flags, rc):
+    if rc == 0:
+        print("Connected successfully")
+        client.subscribe("pi_tasks")
+    else:
+        print(f"Connection failed with code {rc}")
+
+# Set the callback for connection
+client.on_connect = on_connect
 
 # Configure the client with the AWS IoT Core endpoint and certificates
 client.tls_set(ca_certs="root-CA.crt",
@@ -27,10 +42,9 @@ client.tls_set(ca_certs="root-CA.crt",
                ciphers=None)
 
 # Connect to the AWS IoT Core endpoint
+print("Connecting to AWS IoT Core endpoint...")
 client.connect("at6fo26c2tah4-ats.iot.us-east-1.amazonaws.com", port=8883)
 
-# Subscribe to the IoT topic
-client.subscribe("pi_tasks")
-
 # Start the MQTT client
+print("Starting MQTT client loop...")
 client.loop_forever()
